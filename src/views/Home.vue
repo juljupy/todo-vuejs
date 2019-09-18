@@ -1,41 +1,38 @@
 <template>
   <div class="home">    
-    <input type="text" v-model="tareaNueva" @keyup.enter="guardarTarea">
-
+    <!-- <input type="text" v-model="tareaNueva" @keyup.enter="guardarTarea"> -->
+    <input-component v-model="tareaNueva" @keyup.enter.native="guardarTarea" />
     <table>
       <thead>
         <th>#</th>
-        <th>Tarea</th>
+        <th class="ok">Tarea</th>
         <th>Editar</th>
         <th>Eliminar</th>
       </thead>
 
       <tbody>
-        <tr v-for="(tarea, index) in tareas" :key="`item-tarea-${index}`" :class="tarea.done ? 'ok' : ''">
-          <td>{{ index + 1}}</td>
-          <td>{{ tarea.text }}</td>
-          <td>
-            <button @click="editarTarea(index)">Editar</button>
-          </td>
-          <td>
-            <button @click="eliminarTarea(index)">Eliminar</button>
-          </td>
-        </tr>
+
+        <item-component v-for="(tarea, index) in tareas" 
+        :key="index"
+        :tarea="tarea"
+        :index="index"
+        v-on:editar="editarTarea"
+        v-on:eliminar="eliminarTarea"
+        />
+
       </tbody>
     </table>
   </div>
 </template>
 
-<style>
-.ok {
-  background-color: blueviolet;
-  color: white;
-}
-</style>
 
 <script>
+import ItemComponent from '../components/ItemComponent.vue';
+import InputComponent from '../components/InputComponent.vue';
+
 export default {
   name: "home",
+  components : {ItemComponent, InputComponent},
   data() {
     return {
       tareaNueva: '',
