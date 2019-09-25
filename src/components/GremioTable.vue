@@ -20,8 +20,8 @@
             <td class="py-4 px-6 border-b border-grey-light">
               <gremio-button text="Edit" type="info" class="mr-2" @click.native="editTask(index)" v-if="!task.done"></gremio-button>
               <gremio-button text="Delete" type="danger" class="mr-2" @click.native="deleteTask(index)"></gremio-button>
-              <gremio-button text="DONE" type="success" @click.native="setDone(index)" v-if="!task.done"></gremio-button>
-              <gremio-button text="UNDONE" type="warning" @click.native="setUndone(index)" v-if="task.done"></gremio-button>
+              <gremio-button text="DONE" type="success" @click.native="setDone({index, status: true})" v-if="!task.done"></gremio-button>
+              <gremio-button text="UNDONE" type="warning" @click.native="setDone({index, status: false})" v-if="task.done"></gremio-button>
             </td>
           </tr>
         </tbody>
@@ -33,6 +33,7 @@
 <script>
   import GremioInput from "./GremioInput"
   import GremioButton from "./GremioButton"
+  import { mapActions } from 'vuex'
 
   export default {
     name: 'gremioatable',
@@ -42,66 +43,18 @@
       GremioButton
     },
 
-    data() {
-      return {
-        editRow: {
-          text: '',
-          index: null,
-          done: false,
-          option: 'new'
-        },
-        tasks: [{
-            text: "Tarea comer",
-            done: false
-          },
-          {
-            text: "Tarea estudiar",
-            done: false
-          },
-          {
-            text: "Tarea programar",
-            done: true
-          }
-        ]
-      };
+    computed: {
+      tasks(){
+        return this.$store.getters.getTasks
+      },
+
+      editRow(){
+        return this.$store.getters.getEditRow
+      }
     },
 
     methods: {
-      saveTask(task) {
-        const me = this;
-
-        if (task.index !== null) {
-          me.tasks[task.index].text = task.text;
-        } else {
-          me.tasks.push(task);
-        }
-
-        me.editRow = {
-          text: '',
-          index: null,
-          done: false,
-          option: 'new'
-        };
-      },
-
-      editTask(index) {
-        const me = this;
-        me.editRow = me.tasks[index];
-        me.editRow.option = 'edit';
-        me.editRow.index = index;
-      },
-
-      deleteTask(index) {
-        this.tasks.splice(index, 1);
-      },
-
-      setDone(index){
-        this.tasks[index].done = true;
-      },
-
-      setUndone(index){
-        this.tasks[index].done = false;
-      }
+      ...mapActions(['saveTask', 'editTask', 'setDone', 'deleteTask'])
     }
   }
 </script>
